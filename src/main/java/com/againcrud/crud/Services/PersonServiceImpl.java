@@ -1,14 +1,9 @@
 package com.againcrud.crud.Services;
-
 import com.againcrud.crud.Entity.Person;
 import com.againcrud.crud.Repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +11,7 @@ import java.util.Optional;
 public class PersonServiceImpl implements PersonService {
 
 
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
 
     @Autowired
     public PersonServiceImpl(PersonRepository personRepository) {
@@ -30,7 +25,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public ResponseEntity<?> getByID(String id) {
-        if (id != null && id != "") {
+        if (id != null && !id.equals("")) {
             Optional<Person> obj = personRepository.findById(Long.parseLong(id));
             if (obj.isPresent())
                 return ResponseEntity.ok(obj.get());
@@ -42,8 +37,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public ResponseEntity<?> addPerson(Person person) {
-        //Validation
-        if (person != null && person.getName() != null && person.getName() != "" && person.getSurname() != null && person.getSurname() != "") {
+        if (person != null && person.getName() != null && !person.getName().equals("") && person.getSurname() != null && !person.getSurname().equals("")) {
             Optional<Person> obj = Optional.ofNullable(personRepository.findByNameAndSurname(person.getName(), person.getSurname()));
             if (obj.isPresent())
                 return ResponseEntity.badRequest().body("Record already exist");
@@ -58,8 +52,8 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public ResponseEntity<?> updatePerson(Person person) {
         if (person != null && person.getName() != null
-                && person.getName() != "" && person.getSurname()
-                != null && person.getSurname() != "" && person.getId() != null) {
+                && !person.getName().equals("") && person.getSurname()
+                != null && !person.getSurname().equals("") && person.getId() != null) {
             Optional<Person> obj = personRepository.findById(person.getId());
             if (obj.isPresent()) {
                 personRepository.save(person);
@@ -72,7 +66,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public ResponseEntity<?> deleteByID(String id) {
-        if (id != null && id != "") {
+        if (id != null && !id.equals("")) {
             Optional<Person> obj = personRepository.findById(Long.parseLong(id));
             if (obj.isPresent()) {
                 personRepository.deleteById(Long.parseLong(id));
